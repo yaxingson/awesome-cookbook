@@ -4,33 +4,33 @@
 
 ### The JavaScript Language
 
-- [Setting Up a Development Environment]()
-- [Strings and Regular Expressions]()
-- [Numbers]()
-- [Dates]()
-- [Arrays]()
-- [Functions]()
-- [Objects]()
-- [Classes]()
-- [Asynchronous Programming]()
-- [Errors and Testing]()
+- [Setting Up a Development Environment](./javascript/setting-up-a-development-environment/)
+- [Strings and Regular Expressions](./javascript/strings-and-regular-expressions/)
+- [Numbers](./javascript/numbers/)
+- [Dates](./javascript/date/)
+- [Arrays](./javascript/arrays/)
+- [Functions](./javascript/functions/)
+- [Objects](./javascript/objects/)
+- [Classes](./javascript/classes/)
+- [Asynchronous Programming](./javascript/asynchronous-programming/)
+- [Errors and Testing](./javascript/errors-and-testing/)
 
 ### JavaScript in the Browser
 
-- [Browser Tools]()
-- [Working with HTML]()
-- [Fetch Remote Data]()
-- [Data Persistence]()
-- [Working with Media]()
-- [Writing Web Applications]()
+- [Browser Tools](./javascript/browser-tools/)
+- [Working with HTML](./javascript/working-with-html/)
+- [Fetch Remote Data](./javascript/fetch-remote-data/)
+- [Data Persistence](./javascript/data-persistence/)
+- [Working with Media](./javascript/working-with-media/)
+- [Writing Web Applications](./javascript/writing-web-applications/)
 
 ### Node.js
 
-- [Node Basic]()
-- [Node Modules]()
-- [Managing Node]()
-- [Remote Data]()
-- [Building Web Applications with Express]()
+- [Node Basic](./javascript/node-basic/)
+- [Node Modules](./javascript/node-modules/)
+- [Managing Node](./javascript/managing-node/)
+- [Remote Data](./javascript/remote-data/)
+- [Building Web Applications with Express](./javascript/building-web-applications-with-express/)
 
 ## Python
 
