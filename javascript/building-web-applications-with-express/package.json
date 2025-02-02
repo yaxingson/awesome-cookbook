@@ -1,0 +1,24 @@
+{
+  "private": false,
+  "name": "building-web-applications-with-express",
+  "version": "0.0.1",
+  "author": "yaxingson",
+  "packageManager": "pnpm@9.2.0",
+  "type": "module",
+  "scripts": {
+    "preinstall": ""
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  },
+  "pnpm": {
+    "peerDependencyRules": {}
+  },
+  "homepage": "",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2",
+    "http-errors": "^2.0.0",
+    "morgan": "^1.10.0"
+  }
+}
