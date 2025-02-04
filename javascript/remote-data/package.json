@@ -1,0 +1,23 @@
+{
+  "private": false,
+  "name": "remote-data",
+  "version": "0.0.1",
+  "author": "yaxingson",
+  "packageManager": "pnpm@9.2.0",
+  "type": "module",
+  "scripts": {
+    "preinstall": ""
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  },
+  "pnpm": {
+    "peerDependencyRules": {}
+  },
+  "homepage": "",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "got": "^14.4.5"
+  }
+}
