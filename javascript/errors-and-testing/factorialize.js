@@ -1,5 +1,5 @@
-function factorialize(number) {
-  if (number < 0) {
+module.exports = function factorialize(number) {
+  if(number < 0) {
     throw new RangeError('Factorials are only defined for positive numbers')
   } else if (number != Math.trunc(number)) {
     throw new RangeError('Factorials are only defined for integers')
@@ -16,6 +16,3 @@ function factorialize(number) {
     }
   }
 }
-
-
-
