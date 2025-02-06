@@ -2,7 +2,7 @@
 
 ## JavaScript
 
-### JavaScript 语言
+### JavaScript语言
 
 - [设置开发环境](./javascript/setting-up-a-development-environment/)
 - [字符串和正则表达式](./javascript/strings-and-regular-expressions/)
@@ -15,37 +15,54 @@
 - [异步编程](./javascript/asynchronous-programming/)
 - [错误和测试](./javascript/errors-and-testing/)
 
-### 浏览器中的 JavaScript
+### 浏览器中的JavaScript
 
 - [浏览器工具](./javascript/browser-tools/)
-- [与 HTML 交互](./javascript/working-with-html/)
+- [与HTML的交互](./javascript/working-with-html/)
 - [获取远程数据](./javascript/fetch-remote-data/)
 - [数据持久性](./javascript/data-persistence/)
-- [处理媒体](./javascript/working-with-media/)
-- [编写 Web 应用程序](./javascript/writing-web-applications/)
+- [媒体处理](./javascript/working-with-media/)
+- [编写Web应用程序](./javascript/writing-web-applications/)
 
 ### Node.js
 
-- [Node 基础](./javascript/node-basic/)
-- [Node 模块](./javascript/node-modules/)
-- [管理 Node](./javascript/managing-node/)
+- [Node基础](./javascript/node-basic/)
+- [Node模块](./javascript/node-modules/)
+- [管理Node](./javascript/managing-node/)
 - [远程数据](./javascript/remote-data/)
-- [使用 Express 构建 Web 应用程序](./javascript/building-web-applications-with-express/)
+- [使用Express构建Web应用程序](./javascript/building-web-applications-with-express/)
 
 ## Python
 
-- [数据结构和算法]()
-- [字符串和文本]()
-- [数字、日期和时间]()
-- [迭代器和生成器]()
-- [文件和输入/输出]()
-- [数据编码和处理]()
-- [函数]()
-- [类和对象]()
-- [元编程]()
-- [模块和包]()
-- [网络和 Web 编程]()
-- [并发]()
-- [实用脚本和系统管理]()
-- [测试、调试和异常]()
-- [C 扩展]()
+- [数据结构和算法](./python/data-structures-and-algorithms/)
+- [字符串和文本](./python/strings-and-text/)
+- [数字、日期和时间](./python/numbers-dates-and-times/)
+- [迭代器和生成器](./python/iterators-and-generators/)
+- [文件和输入/输出](./python/files-and-io/)
+- [数据编码和处理](./python/data-encoding-and-processing/)
+- [函数](./python/functions/)
+- [类和对象](./python/classes-and-objects/)
+- [元编程](./python/metaprogramming/)
+- [模块和包](./python/modules-and-packages/)
+- [网络和Web编程](./python/network-and-web-programming/)
+- [并发](./python/concurrency/)
+- [实用脚本和系统管理](./python/utility-scripting-and-system-administration/)
+- [测试、调试和异常](./python/testing-debugging-and-exceptions/)
+- [C扩展](./python/c-extensions/)
+
+## Go
+
+- [I/O和文件系统]()
+- [命令行工具]()
+- [数据转换和组合]()
+- [Go中的错误处理]()
+- [网络编程]()
+- [关于数据库和存储的一切]()
+- [Web客户端和API]()
+- [Go中的微服务应用]()
+- [测试Go代码]()
+- [并行和并发]()
+- [分布式系统]()
+- [响应式编程和数据流]()
+- [无服务器编程]()
+- [性能改进、技巧和窍门]()
