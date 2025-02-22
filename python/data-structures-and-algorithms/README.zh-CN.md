@@ -250,17 +250,180 @@ print(q.pop()) # Item('banana')
 
 ## 将键映射到字典中的多个值
 
+利用`collections`模块中的`defaultdict`类创建一键多值字典:
+
+```py
+from collections import defaultdict
+
+# 保留插入元素的顺序
+d = defaultdict(list)
+
+d['a'].append(1)
+d['a'].append(2)
+d['b'].append(4)
+
+print(d) # defaultdict(<class 'list'>, {'a': [1, 2], 'b': [4]})
+
+# 消除重复元素且不关心插入元素的顺序
+d = defaultdict(set)
+
+d['a'].add(1)
+d['a'].add(2)
+d['b'].add(4)
+
+print(d) # defaultdict(<class 'set'>, {'a': {1, 2}, 'b': {4}})
+
+d = {}
+
+d.setdefault('a', []).append(1)
+d.setdefault('a', []).append(2)
+d.setdefault('b', []).append(4)
+
+print(d) # {'a': [1, 2], 'b': [4]}
+
+```
+
 ## 保持字典的顺序
+
+当对字典做迭代或序列化操作时，控制字典中元素的顺序:
+
+```py
+import json
+from collections import OrderedDict
+
+d = OrderedDict()
+
+d['gpt'] = 1
+d['deepseek'] = 2 
+d['grok'] = 3
+d['llama'] = 4
+d['deepseek'] = 5
+
+for key, value in d.items():
+  print(f'({key}, {value})')
+
+print(json.dumps(d))
+
+```
 
 ## 使用字典进行计算
 
+```py
+prices = {
+  'google': 45.16,
+  'meta': 90.12,
+  'dropbox': 37.10,
+  'apple': 85.94,
+  'softbank': 70.61
+}
+
+# `zip()`创建的迭代器只能被消费一次
+min_price = min(zip(prices.values(), prices.keys()))
+max_price = max(zip(prices.values(), prices.keys()))
+prices_sorted = sorted(zip(prices.values(), prices.keys()))
+
+print(min_price) # (37.1, 'dropbox')
+print(max_price) # (90.12, 'meta')
+
+# [(37.1, 'dropbox'), (45.16, 'google'), (70.61, 'softbank'), (85.94, 'apple'), (90.12, 'meta')]
+print(prices_sorted) 
+
+min_price_name = min(prices, key=lambda k:prices[k])
+max_price_name = max(prices, key=lambda k:prices[k])
+
+print(min_price_name)
+print(max_price_name)
+
+```
+
 ## 查找两个字典中的共同点
+
+利用集合操作(并集、交集和差集)找出字典中的相同:
+
+```py
+a = { 'x':1, 'y':2, 'z':3 }
+b = { 'w':10, 'x':11, 'y':2 }
+
+print(a.keys() & b.keys()) # {'x', 'y'}
+print(a.keys() - b.keys()) # {'z'}
+print(a.items() & b.items())  # {('y', 2)}
+
+c = {k:a[k] for k in a.keys() - {'z', 'w'}}
+
+print(c) # {'x': 1, 'y': 2}
+
+```
 
 ## 在保持顺序的同时从序列中删除重复项
 
 ## 命名切片
 
+> 平面文件: 一种包含没有相对关系结构的记录文件
+
+通过对切片命名避免硬编码的切片索引:
+
+```py
+url = 'https://cn.bing.com/search?q=dropbox&qs=n&form=QBRE&sp=-1&lq=0'
+
+QUERY_SLICE = slice(url.index('?')+1, len(url))
+
+query_string = url[QUERY_SLICE]
+
+print(query_string) # q=dropbox&qs=n&form=QBRE&sp=-1&lq=0
+
+print(QUERY_SLICE.start) # 27
+print(QUERY_SLICE.stop) # 62
+print(QUERY_SLICE.step)  # None
+
+print(QUERY_SLICE.indices(len(url))) # (27, 62, 1)
+
+```
+
 ## 确定序列中最常出现的项目
+
+```py
+from collections import Counter
+
+word_list = [
+  "dog", "banana", "cat", "dog", "elephant", "flower", 
+  "guitar", "happiness", "island", "flower", "kite", "lion",
+  "dog", "banana", "island", "dog", "apple", "island", "cat"
+]
+
+word_count = Counter(word_list)
+top_three = word_count.most_common(3)
+
+print(word_count)
+print(top_three)
+
+more_words = ['cat', 'dog', 'lion']
+
+# word_count.update(more_words)
+
+for word in more_words:
+  word_count[word] += 1
+
+print(word_count['dog'])
+
+```
+
+Counter对象支持各种数学运算:
+
+```py
+from collections import Counter
+
+a = Counter(['green', 'blue', 'red', 'blue', 'blue'])
+b = Counter(['blue', 'pink', 'orange'])
+
+c = a + b
+
+print(c)
+
+d = a - b 
+
+print(d)
+
+```
 
 ## 按公共键对字典列表进行排序
 

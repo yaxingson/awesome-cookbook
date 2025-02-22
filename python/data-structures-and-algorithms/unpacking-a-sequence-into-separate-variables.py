@@ -1,4 +1,9 @@
-try:
-  x, y, z = (6, 8)
-except ValueError as e:
-  print(f'{type(e).__name__}: {e}')
+from unittest import TestCase, main
+
+class TestUnpackSequenceIntoSeparateVariables(TestCase):
+  pass
+
+
+
+if __name__ == '__main__':
+  main()
