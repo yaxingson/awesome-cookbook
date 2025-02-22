@@ -32,7 +32,7 @@ except ValueError as e:
 
 ```
 
-通常可以用一个用不到的变量名作为某些丢弃值的名称:
+通常可以用一个用不到的变量名（比如`_`或`ign`）作为某些丢弃值的名称:
 
 ```py
 _, shares, price, _ = ['Jorge Atkins', 67, 78.9, (2012, 12, 21)]
@@ -41,12 +41,168 @@ print(price) # 78.9
 
 ```
 
-
 ## 从任意长度的可迭代对象中解包元素
+
+Python的"*表达式"可以解决可迭代对象分解的值过多的问题:
+
+```py
+grades = [99, 62, 61, 100, 63, 90, 80]
+
+first, *middle, last = grades
+
+print(middle) # [62, 61, 100, 63, 90]
+
+user_record = ('Earl Johnson', 'lukot@ni.au', '773-555-1212', '847-555-1212')
+
+name, email, *phone_numbers = user_record
+
+print(phone_numbers) # ['773-555-1212', '847-555-1212']
+
+*trailing, current = [69.2, 77.3, 47.6, 13.9, 30.8, 75.1, 37.9]
+
+print(trailing) # [69.2, 77.3, 47.6, 13.9, 30.8, 75.1]
+print(current) # 37.9
+
+url = 'https://cn.bing.com/search?q=python&qs=ds&form=QBRE'
+
+*_, hostname, _ = url.split('/')
+
+print(hostname) # 'cn.bing.com'
+
+```
+
+*式语法迭代一个变长的元组序列:
+
+```py
+shapes = [
+  ('circle', 5), 
+  ('rect', 80, 30), 
+  ('circle', 10),
+]
+
+def create_circle(radius):
+  pass
+
+def create_rect(width, height):
+  pass
+
+for name, *args in shapes:
+  if name == 'circle':
+    create_circle(*args)
+  elif name == 'rect':
+    create_rect(*args)
+
+```
+
+利用*分解操作实现递归算法:
+
+```py
+def sum(items):
+  head, *tail = items
+  return head + sum(tail) if tail else head
+
+```
 
 ## 保留最后 N 个项目
 
+保存有限的历史记录:
+
+```py
+from collections import deque
+
+def search(lines, pattern, history=5):
+  prev_lines = deque(maxlen=history)  
+  for line in lines:
+    if pattern in line:
+      yield line, prev_lines
+    prev_lines.append(line)
+
+with open('./external/the-zen-of-python.txt') as f:
+  for line, prev_lines in search(f, 'than'):
+    for prev_line in prev_lines:
+      print(prev_line, end='')
+    print(line, end='')
+    print('-'*20)
+
+```
+
+利用`deque`可以创建固定长度或无界限的队列:
+
+```py
+q = deque(maxlen=3)
+
+q.append(5)
+q.append(1)
+q.append(9)
+
+print(q) # deque([5, 1, 9], maxlen=3)
+
+q.append(2)
+q.append(7)
+
+print(q) # deque([9, 2, 7], maxlen=3)
+
+q = deque()
+
+q.append(67)
+q.append(51)
+q.append(12)
+
+print(q) # deque([67, 51, 12])
+
+q.appendleft(34)
+
+print(q) # deque([34, 67, 51, 12])
+
+print(q.pop()) # 12
+print(q) # deque([34, 67, 51])
+
+print(q.popleft()) # 34
+print(q) # deque([67, 51])
+
+```
+
 ## 查找最大的或最小的 N 个项目
+
+在某个集合中找出最大或最小的N个元素:
+
+```py
+import heapq
+
+portfolio = [
+  {'name':'IBM', 'shares': 51, 'price':72.93},
+  {'name':'APPLE', 'shares': 65, 'price':448.81},
+  {'name':'AliBABA', 'shares': 86, 'price':101.73},
+  {'name':'FB', 'shares': 116, 'price':182.65},
+  {'name':'AWS', 'shares': 45, 'price':348.72},
+]
+
+cheap = heapq.nsmallest(3, portfolio, key=lambda s:s['price'])
+expensive = heapq.nlargest(3, portfolio, key=lambda s:s['price'])
+
+print(cheap)
+print(expensive)
+
+```
+
+当查找的最大或最小元素个数同集合中元素的总数目相比很小时:
+
+```py
+import heapq
+
+numbers = [50, 23, -1, 52, 5, 46, 16, -6, 7, 20]
+
+heapq.heapify(numbers)
+
+print(numbers) # [-6, 5, -1, 7, 20, 46, 16, 52, 23, 50]
+
+print(heapq.heappop(numbers)) # -6
+print(heapq.heappop(numbers)) # -1
+print(heapq.heappop(numbers)) # 5
+
+```
+
+> 查找集合中最大或最小的元素时, 内置函数`max`和`min`可以提供更好的性能
 
 ## 实现优先队列
 
