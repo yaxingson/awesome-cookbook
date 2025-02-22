@@ -2,6 +2,46 @@
 
 ## 将序列解包为单独的变量
 
+任何序列（或可迭代对象）都可以通过赋值操作分解为单独的变量，唯一要求是变量的总数和结构要与序列一致:
+
+```py
+data = ['Max Haynes', 50, 91.9, (1997, 2, 15)]
+
+name, shares, price, date = data
+
+print(name) # 'Max Haynes'
+print(date) # (1997, 4, 15)
+
+name, shares, price, (year, month, day) = data
+
+print(month) # 2
+
+a, b, c, d, e = 'grape'
+
+print(c) # a
+
+```
+
+当元素的数量不匹配时，会抛出`ValueError`错误:
+
+```py
+try:
+  x, y, z = (6, 8)
+except ValueError as e:
+  print(f'{type(e).__name__}: {e}')
+
+```
+
+通常可以用一个用不到的变量名作为某些丢弃值的名称:
+
+```py
+_, shares, price, _ = ['Jorge Atkins', 67, 78.9, (2012, 12, 21)]
+
+print(price) # 78.9
+
+```
+
+
 ## 从任意长度的可迭代对象中解包元素
 
 ## 保留最后 N 个项目
