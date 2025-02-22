@@ -206,6 +206,48 @@ print(heapq.heappop(numbers)) # 5
 
 ## 实现优先队列
 
+利用heapq模块实现简单的优先级队列:
+
+```py
+import heapq
+
+class PriorityQueue:
+  def __init__(self):
+    self.queue = []
+    # 将具有相同优先级的元素以适当的顺序排列
+    self.index = 0
+
+  def push(self, item, priority):
+    # priority取负值可以使队列能够按元素的优先级从高到低的顺序排列
+    heapq.heappush(self.queue, (-priority, self.index, item))
+    self.index += 1
+
+  def pop(self):
+    return heapq.heappop(self.queue)[-1]
+
+class Item:
+  def __init__(self, name):
+    self.name = name
+
+  def __repr__(self):
+    return 'Item({!r})'.format(self.name)
+
+q = PriorityQueue()
+
+q.push(Item('apple'), 6)
+q.push(Item('banana'), 1)
+q.push(Item('grade'), 3)
+q.push(Item('strawberry'), 5)
+q.push(Item('watermelon'), 3)
+
+print(q.pop()) # Item('apple')
+print(q.pop()) # Item('strawberry')
+print(q.pop()) # Item('grade')
+print(q.pop()) # Item('watermelon')
+print(q.pop()) # Item('banana')
+
+```
+
 ## 将键映射到字典中的多个值
 
 ## 保持字典的顺序
