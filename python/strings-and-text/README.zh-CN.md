@@ -2,11 +2,82 @@
 
 ## 在多个分隔符上拆分字符串
 
+```py
+import re
+
+line = 'agent-gpt allows; you, to,configure,  and'
+
+print(re.split(r'[;,\s]\s*', line))
+
+# 当正则表达式模式中包含捕获组时，最终结果也会包含匹配的文本
+fields = re.split(r'(;|,|\s)\s*', line)
+
+print(fields)
+
+# 使用非捕获组（?:）
+fields = re.split(r'(?:;|,|\s)\s*', line)
+
+print(fields)
+
+
+```
+
 ## 匹配字符串的开头或结尾
+
+```py
+import os
+from urllib.request import urlopen
+
+url = 'https://github.com/reworkd/AgentGPT'
+filename = 'README.zh-CN.md'
+
+print(url.startswith('https'))
+print(filename.endswith('.md'))
+
+files = os.listdir('.')
+
+# `startswith`和`endswith`的第一个参数只能是字符串或元组类型
+print([name for name in files if name.endswith(('.md'))])
+
+def read_data(path:str):
+  if path.startswith(('http:', 'https:', 'ftp:')):
+    return urlopen(path).read()
+  else:
+    with open(path) as f:
+      return f.read()
+
+print(read_data('https://httpbin.org/get'))
+
+```
+
 
 ## 使用 Shell 通配符模式匹配字符串
 
+UNIX Shell下的通配符匹配:
+
+```py
+from fnmatch import fnmatch, fnmatchcase
+
+# `fnmatch()`匹配模式的大小写区分规则和操作系统的底层文件系统相同
+print(fnmatch('foo.txt', '*.txt'))
+print(fnmatch('foo.txt', '?oo.txt'))
+print(fnmatch('Dat45.csv', 'Dat[0-9]*'))
+
+# `fnmatchcase()`匹配模式的大小写区分规则和操作系统的底层文件系统无关
+print(fnmatchcase('foo.txt', '*.TXT'))
+
+```
+
+> 编写匹配文件名的代码时应使用`glob`模块
+
 ## 匹配和搜索文本模式
+
+```py
+
+
+
+```
+
 
 ## 搜索和替换文本
 
