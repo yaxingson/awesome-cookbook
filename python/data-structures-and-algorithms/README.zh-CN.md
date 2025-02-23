@@ -356,6 +356,46 @@ print(c) # {'x': 1, 'y': 2}
 
 ## 在保持顺序的同时从序列中删除重复项
 
+> 可哈希对象在它的生存期内是不可变的，且含有`__hash__()`方法，包括整数、浮点数、字符串和元组等
+
+```py
+# 参数key的作用是将序列中的不可哈希对象转换为可哈希类型，便于检测重复项
+def dedupe(items, key=None):
+  seen = set()
+  for item in items:
+    val = item if key is None else key(item)
+    if val not in seen:
+      yield item
+      seen.add(val)
+
+a = [1, 5, 2, 1, 9, 1, 5, 10]
+
+print(list(dedupe(a))) # [1, 5, 2, 9, 10]
+
+a = [
+  { 'x':1, 'y':2 },
+  { 'x':1, 'y':3 },
+  { 'x':1, 'y':2 },
+  { 'x':2, 'y':4 },
+]
+
+print(list(dedupe(a, key=lambda item: (item['x'], item['y']))))
+# [{'x': 1, 'y': 2}, {'x': 1, 'y': 3}, {'x': 2, 'y': 4}]
+
+print(list(dedupe(a, key=lambda item: item['x'])))
+# [{'x': 1, 'y': 2}, {'x': 2, 'y': 4}]
+
+```
+
+去除序列中的重复项，且不保证元素顺序:
+
+```py
+a = [1, 5, 2, 1, 9, 1, 5, 10]
+
+print(list(set(a)))
+
+```
+
 ## 命名切片
 
 > 平面文件: 一种包含没有相对关系结构的记录文件
@@ -427,7 +467,53 @@ print(d)
 
 ## 按公共键对字典列表进行排序
 
+利用`operator`模块中的`itemgetter`函数对字典列表排序:
+
+```py
+from operator import itemgetter
+
+rows = [
+  {'user_id':'1004', 'first_name':'Ralph', 'last_name':'Copeland'},
+  {'user_id':'1001', 'first_name':'Adelaide', 'last_name':'Benson'},
+  {'user_id':'1005', 'first_name':'Craig', 'last_name':'Greer'},
+  {'user_id':'1003', 'first_name':'Clarence', 'last_name':'Lawrence'},
+  {'user_id':'1002', 'first_name':'Robert', 'last_name':'Medina'},
+]
+
+rows_by_uid = sorted(rows, key=itemgetter('user_id'))
+
+# 同时提取多个字段，等价于下段代码:
+# rows_by_name = sorted(rows, key=lambda r: (r['first_name'], r['last_name']))
+rows_by_name = sorted(rows, key=itemgetter('first_name', 'last_name'))
+
+print(rows_by_uid)
+print(rows_by_name)
+
+```
+
 ## 对没有原生比较支持的对象进行排序
+
+```py
+class User:
+  def __init__(self, user_id):
+    self.user_id = user_id
+
+  def __repr__(self):
+    return 'User({!r})'.format(self.user_id)
+
+users = [User(23), User(5), User(99)]
+
+sorted_users = sorted(users, key=lambda u: u.user_id)
+
+print(sorted_users) # [User(5), User(23), User(99)]
+
+min_user = min(users, key=lambda u: u.user_id)
+max_user = max(users, key=lambda u: u.user_id)
+
+print(min_user) # User(5)
+print(max_user) # User(99)
+
+```
 
 ## 根据字段将记录分组
 
