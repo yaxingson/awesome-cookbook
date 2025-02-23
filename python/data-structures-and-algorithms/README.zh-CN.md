@@ -431,12 +431,265 @@ print(d)
 
 ## 根据字段将记录分组
 
+用`itertools.groupby()`函数对数据分组:
+
+```py
+from operator import itemgetter
+from itertools import groupby
+from collections import defaultdict
+
+rows = [
+  {'name':'Hester Perez', 'country':'Moldova', 'birth':'07/24/2025'},
+  {'name':'Olga Moss', 'country':'Germany', 'birth':'08/08/2025'},
+  {'name':'Lelia Richardson', 'country':'Malawi', 'birth':'08/11/2025'},
+  {'name':'Cecilia Guzman', 'country':'Panama', 'birth':'08/08/2025'},
+  {'name':'Andrew Jimenez', 'country':'Jordan', 'birth':'08/08/2025'},
+  {'name':'Leonard Carter', 'country':'Faroe Islands', 'birth':'03/15/2025'},
+  {'name':'Lawrence Townsend', 'country':'Sierra Leone', 'birth':'03/13/2025'},
+  {'name':'Louis Mitchell', 'country':'Niger', 'birth':'07/24/2025'},
+]
+
+rows.sort(key=itemgetter('birth'))
+
+# `groupby`只能检查连续的项
+for birth, items in groupby(rows, key=itemgetter('birth')):
+  print(birth)
+  for item in items:
+    print(' ', item)
+
+# 利用`defaultdict()`构建一键多值字典
+rows_by_birth = defaultdict(list)
+
+for row in rows:
+  rows_by_birth[row['birth']].append(row)
+
+print(rows_by_birth)
+
+```
+
 ## 过滤序列元素
+
+使用列表推导式:
+
+```py
+from itertools import compress
+
+grades = [82, 94, 70, 67, 66, 56, 74]
+
+print([x for x in grades if x >= 80])
+
+pass_grades = (x for x in grades if x >= 60)
+
+for grade in pass_grades:
+  print(grade)
+
+
+def is_int(val):
+  try:
+    int(val)
+    return True
+  except ValueError:
+    return False
+  
+values = ['1', '2', '-6', '-', '5', 'N/A', '0']
+
+print(list(filter(is_int, values)))
+print([v if is_int(v) else 0 for v in values])
+
+countries = [
+  'Greenland',
+  'Cameroon',
+  'Israel',
+  'Cayman Islands',
+  'United Arab Emirates',
+  'Vietnam',
+  'Nigeria',
+]
+
+selectors = [is_int(v) for v in values]
+ 
+print(selectors)
+print(list(compress(countries, selectors)))
+
+```
 
 ## 提取字典的子集
 
+利用字典推导式从字典中提取子集:
+
+```py
+prices = {
+  'APPLE': 261.28,
+  'IBM': 203.74,
+  'GOOGLE': 384.15,
+  'SOFTBANK': 133.72,
+  'DROPBOX': 58.51,
+}
+
+p1 = { key:value for key, value in prices.items() if value > 300 }
+
+print(p1) # {'GOOGLE': 384.15}
+
+tech_names = {'APPLE', 'GOOGLE', 'DROPBOX'}
+
+p2 = { key:value for key, value in prices.items() if key in tech_names }
+
+print(p2) # {'APPLE': 261.28, 'GOOGLE': 384.15, 'DROPBOX': 58.51}
+
+```
+
 ## 将名称映射到序列元素
+
+通过名称访问元素:
+
+```py
+from collections import namedtuple
+
+User = namedtuple('User', ('name', 'email'))
+
+user = User('Lilly Moss', 'rucasla@guha.ps')
+
+print(issubclass(User, tuple)) # True
+
+print(user) # User(name='Lilly Moss', email='rucasla@guha.ps')
+print(user.email) # rucasla@guha.ps
+
+print(len(user)) # 2
+
+username, email = user
+
+print(f'<{username},{email}>') # <Lilly Moss,rucasla@guha.ps>
+
+# namedtuple是不可变的
+try:
+  user.name = 'Raymond Leonard'
+except AttributeError:
+  pass
+
+user = user._replace(name='Raymond Leonard')
+
+print(user.name) # Raymond Leonard
+
+# 利用`_replace()`方法填充具有可选或缺失字段的命名元组
+Stock = namedtuple('Stock', ['name', 'shares', 'price', 'date', 'time'])
+
+stock_prototype = Stock('', 0, 0.0, None, None)
+
+def dict_to_stock(s):
+  return stock_prototype._replace(**s)
+
+d = {'name':'ACME', 'shares':100}
+
+print(dict_to_stock(d)) # Stock(name='ACME', shares=100, price=0.0, date=None, time=None)
+
+```
+
+> 定义`__slots__`属性的类
 
 ## 同时转换和减少数据
 
+通过生成器表达式将数据换算和转换结合在一起:
+
+```py
+import os
+
+numbers = [1, 2, 3, 4, 5]
+
+# 当把生成器表达式作为函数的单独参数时，不必重复使用括号
+s = sum(x * x for x in numbers)
+
+print(s)
+
+s = ('ACME', 50, 123.45)
+
+print(','.join(str(x) for x in s))
+
+portfolio = [
+  {'name':'APPLE', 'shares': 34},
+  {'name':'META', 'shares': 80},
+  {'name':'SOFTBANK', 'shares': 29},
+  {'name':'IBM', 'shares': 41},
+  {'name':'GOOGLE', 'shares': 59},
+]
+
+print(min(s['shares'] for s in portfolio))
+
+files = os.listdir('.')
+
+if any(name.endswith('.py') for name in files):
+  print('There be python!')
+else:
+  print('Sorry, no python.')
+
+```
+
 ## 将多个映射合并为单个映射
+
+将多个字典或映射合并为一个单独的映射结构:
+
+```py
+from collections import ChainMap
+
+a = {'x':1, 'z':3}
+b = {'y':2, 'z':4}
+
+c = ChainMap(a, b)
+
+print(c['x']) # 1
+print(c['y']) # 2
+
+# 当存在重复的键时，会采用第一个映射中的值
+print(c['z']) # 3
+
+print(len(c)) # 3
+print(list(c.keys())) # ['y', 'z', 'x']
+
+# 修改映射的操作总会作用在第一个映射结构上
+c['z'] = 10
+c['w'] = 40
+del c['x']
+
+print(a) # {'z': 10, 'w': 40}
+print(b) # {'y': 2, 'z': 4}
+
+try:
+  del c['y']
+except KeyError:
+  pass
+
+```
+
+`ChainMap`与具有作用域的值一起工作:
+
+```py
+global_scope = ChainMap()
+global_scope['x'] = 1
+
+func_scope = global_scope.new_child()
+func_scope['x'] = 2
+
+block_scope = func_scope.new_child()
+block_scope['x'] = 3
+
+print(block_scope) # ChainMap({'x': 3}, {'x': 2}, {'x': 1})
+print(block_scope['x']) # 3
+print(block_scope.parents['x']) # 2
+print(block_scope.parents.parents['x']) # 1
+
+```
+利用字典的`update`方法将多个字典合并在一起:
+
+```py
+a = {'x':1, 'z':3}
+b = {'y':2, 'z':4}
+
+# 避免破坏原始数据
+merged = dict(b)
+
+merged.update(a)
+
+print(merged['x']) # 1
+print(merged['y']) # 2
+print(merged['z']) # 3
+
+```
