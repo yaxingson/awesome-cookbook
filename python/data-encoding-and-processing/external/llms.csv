@@ -1,0 +1,4 @@
+Model,Company,Public
+gpt-4-mimi,openai,False
+llama,meta,True
+gemini,google,False
