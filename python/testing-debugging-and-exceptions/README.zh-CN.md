@@ -211,8 +211,184 @@ except ValueError:
 
 ## 发出警告消息
 
+使用`warnings.warn()`函数产生告警信息:
+
+```py
+# buffer.py
+from warnings import warn
+
+class Buffer:
+  def __init__(self):
+    messages = [
+      'Buffer() is deprecated due to security and usability issues.', 
+      'Please use the Buffer.alloc() or Buffer.allocUnsafe() methods instead'  
+    ]
+    warn(''.join(messages), DeprecationWarning)
+
+  @staticmethod
+  def alloc():
+    pass
+
+  @staticmethod
+  def allocUnsafe():
+    pass
+
+Buffer()
+
+```
+
+告警类别:
+
+- `UserWarning`
+- `DeprecationWarning`
+- `SyntaxWarning`
+- `RuntimeWarning`
+- `ResourceWarning`
+- `FutureWarning`
+
+对告警信息的处理取决于如何执行解释器及其他配置:
+
+```sh
+$ python -W all buffer.py
+
+# 使用`-W error`选项将告警信息转换为异常
+$ python -W error buffer.py
+
+# 忽略所有的告警
+$ python -W ignore buffer.py
+
+```
+
+应用示例:
+
+```py
+from warnings import simplefilter
+
+# 控制告警信息的输出，可选参数值: always、ignore和error
+simplefilter('always')
+
+f = open('./external/motto.txt')
+
+# f.close()
+
+del f
+
+```
+
 ## 调试基本程序崩溃
 
+```sh
+$ python -i program.py
+
+```
+
+在交互式shell环境下加载Python调试器:
+
+```
+Traceback (most recent call last):
+  File "python/testing-debugging-and-exceptions/catching-all-exceptions.py", line 4, in <module>
+    plus('', 0)
+  File "python/testing-debugging-and-exceptions/catching-all-exceptions.py", line 2, in plus
+    return x + y
+TypeError: can only concatenate str (not "int") to str
+>>> plus
+<function plus at 0x000001EE9D0DE160>
+>>> import pdb
+>>> pdb.pm()
+> d:\workspace\repository\github\awesome-cookbook\python\testing-debugging-and-exceptions\catching-all-exceptions.py(2)plus()
+-> return x + y
+(Pdb) w
+  d:\workspace\repository\github\awesome-cookbook\python\testing-debugging-and-exceptions\catching-all-exceptions.py(4)<module>()
+-> plus('', 0)
+> d:\workspace\repository\github\awesome-cookbook\python\testing-debugging-and-exceptions\catching-all-exceptions.py(2)plus()
+-> return x + y
+(Pdb) print x, y
+*** SyntaxError: Missing parentheses in call to 'print'. Did you mean print(x, y)?
+(Pdb) print(x, y)
+ 0
+(Pdb) x, y
+('', 0)
+(Pdb) q
+>>> ^Z
+
+```
+
+
+
+
 ## 对程序进行性能分析和计时
+
+使用UNIX下的`time`命令对整个程序做计时统计:
+
+```sh
+$ time python script.py
+
+```
+
+利用`cProfile`模块针对程序的行为产生一份详细报告:
+
+```sh
+$ python -m cProfile script.py
+
+```
+
+使用装饰器对函数进行性能分析:
+
+```py
+import time
+from functools import wraps
+
+def time_statistics(fn):
+  @wraps(fn)
+  def wrapper(*args, **kwargs):
+    start = time.perf_counter()
+    return_val = fn(*args, **kwargs)
+    end = time.perf_counter()
+    print(f'{fn.__module__}.{fn.__name__}: {end - start}')
+    return return_val
+
+  return wrapper
+
+@time_statistics
+def countdown(n):
+  while n > 0:
+    n -= 1
+
+countdown(100000)
+
+```
+
+通过上下文管理器对程序中的代码块进行计时统计:
+
+```py
+import time
+from contextlib import contextmanager
+
+@contextmanager
+def time_statistics(label):
+  start = time.perf_counter()
+  try:
+    yield
+  finally:
+    end = time.perf_counter()
+    print(f'{label}: {end - start}')
+
+with time_statistics('countdown'):
+  n = 100000
+  while n > 0:
+    n -= 1
+
+```
+
+利用`timeit`模块对短小的代码片段做性能统计:
+
+```py
+from timeit import timeit
+
+print(timeit('sqrt(2)', 'from math import sqrt', number=100000))
+
+```
+
+> 墙上时间和进程时间
 
 ## 让程序运行得更快
