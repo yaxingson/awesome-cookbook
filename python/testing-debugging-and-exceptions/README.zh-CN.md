@@ -195,6 +195,49 @@ except Exception as e:
 
 ## 创建自定义异常
 
+通过继承`Exception`类或其他已有的异常类型创建新的异常类:
+
+```py
+class NetworkError(Exception):
+  def __init__(self, message, code, reason):
+    # 请确保总是用所有传递过来的参数调用`Exception.__init__()`，且所有参数会
+    # 以元组的形式保存在新创建异常类实例的`.args`属性上
+    super().__init__(message, code, reason)
+    self.code = code
+    self.reason = reason
+
+class OfflineError(NetworkError):
+  pass
+
+class ProtocolError(NetworkError):
+  pass
+
+class CrossOriginError(NetworkError):
+  pass
+
+
+def request():
+  pass
+
+try:
+  request()
+except NetworkError as e:
+  pass
+except OfflineError:
+  pass
+except ProtocolError:
+  pass
+
+try:
+  raise NetworkError('Oh, no!', 10291, 'no network connection')
+except NetworkError as e:
+  print(e.args)
+
+```
+
+> `BaseException`是预留给系统退出异常的，比如`KeyboardInterrupt`和
+> `SystemExit`，以及其他应该通知应用程序退出的异常
+
 ## 在响应另一个异常时引发异常
 
 ## 重新引发最后一个异常
@@ -313,8 +356,53 @@ TypeError: can only concatenate str (not "int") to str
 
 ```
 
+当代码在难以获取交互式shell的环境中运行时，通常可以捕获错误并手动生成traceback回溯:
 
+```py
+import traceback
+import sys
+from operator import add
 
+try:
+  add('', 0)
+except:
+  print('***** AN ERROR OCCURRED *****')
+  traceback.print_exc(file=sys.stdout)
+
+```
+
+打印程序的调用栈信息或手动加载调试器:
+
+```py
+import traceback
+import sys
+import pdb
+
+def once(func):
+  called = False
+  def inner(*args, **kwargs):
+    nonlocal called
+    if not called:
+      # 打印函数调用栈信息
+      # traceback.print_stack(file=sys.stdout)
+      
+      # 加载调试器
+      pdb.set_trace()
+
+      func(*args, **kwargs)
+    called = True
+  return inner
+
+def init():
+  print('***** START INIT *****')
+
+init = once(init)
+
+init()
+init()
+init()
+
+```
 
 ## 对程序进行性能分析和计时
 

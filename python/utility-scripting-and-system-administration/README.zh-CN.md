@@ -113,13 +113,116 @@ unpack_archive('utility-scripting-and-system-administration.zip')
 
 ## 读取配置文件
 
+读取`.ini`格式的配置文件:
+
+```py
+import sys
+from configparser import ConfigParser
+
+cfg = ConfigParser()
+
+cfg.read('./external/config.ini')
+
+print(cfg.sections())
+print(cfg.get('Installation', 'include'))
+print(cfg.getint('Network', 'timeout'))
+print(cfg.getboolean('Network', 'usessl'))
+
+cfg.set('Network', 'timeout', '1000')
+cfg.set('Database', 'username', 'admin')
+
+with open('./external/config.ini', 'w') as f:
+  cfg.write(f, space_around_delimiters=True)
+
+```
+
+
 ## 向简单脚本添加日志记录
 
 ## 向库添加日志记录
 
 ## 制作秒表计时器
 
+```py
+import time
+class Timer:
+  # `time.perf_counter`函数总是会使用系统重精度最高的计时器
+  def __init__(self, func=time.perf_counter):
+    self.elapsed = 0.0
+    self._func = func
+    self._start = None
+
+  def start(self):
+    if self._start is not None:
+      raise RuntimeError('Already started')
+    self._start = self._func()
+
+  def stop(self):
+    if self._start is None:
+      raise RuntimeError('Not started')
+    end = self._func()
+    self.elapsed += end - self._start
+    self._start = None
+
+  def reset(self):
+    self.elapsed = 0.0
+
+  def __enter__(self):
+    self.start()
+    return self
+
+  def __exit__(self, *args):
+    self.stop()
+
+  @property
+  def running(self):
+    return self._start is not None
+
+def countdown(n):
+  while n > 0:
+    n -= 1
+
+# 获取进程的CPU时间
+t = Timer(func=time.process_time)
+
+t.start()
+countdown(10000000)
+t.stop()
+
+print(t.elapsed)
+
+with Timer() as t:
+  countdown(10000000)
+print(t.elapsed)
+
+```
+
+> 系统时间和进程时间
+
 ## 对内存和CPU使用设置限制
+
+使用`resource`模块对运行在`UNIX`系统上的程序在内存和CPU的使用量上设定限制:
+
+```py
+import signal
+import resource
+import os
+
+# 限制CPU时间
+def set_max_runtime(seconds):
+  def time_exceeded(*args):
+    raise SystemExit(1)
+  soft, hard = resource.getrlimit(resource.RLIMIT_CPU)
+  resource.setrlimit(resource.RLIMIT_CPU, (seconds, hard))
+  signal.signal(signal.SIGXCPU, time_exceeded)
+
+set_max_runtime(10)
+
+while True:
+  pass
+
+
+```
 
 ## 启动网页浏览器
 
