@@ -87,7 +87,65 @@ print(os.get_terminal_size())
 
 ## 执行外部命令并获取其输出
 
+```py
+from subprocess import check_output, \
+  CalledProcessError, TimeoutExpired, STDOUT
+from shlex import quote
+
+try:
+  # 使用`stderr`参数获取标准输出和标准错误输出
+  out_bytes = check_output(['ls', '-a'], stderr=STDOUT)
+  
+  # 执行带有超时机制的命令
+  out_bytes = check_output(['cmd'], timeout=5)
+
+  # 通过shell执行涉及管道、I/O重定向或其他复杂的命令
+  out_bytes = check_output(['grep python | wc > out'], shell=True)
+
+  print(out_bytes.decode())
+except CalledProcessError as e:
+  out_bytes = e.output
+  code = e.returncode
+  print(out_bytes, code)
+except TimeoutExpired as e:
+  pass
+
+```
+
+> 在shell下执行命令存在安全威胁，特别是当参数来自于用户输入
+
+同一个子进程通信:
+
+```py
+from subprocess import Popen, PIPE
+
+text = '''
+hello world
+this is a test
+goodbye
+'''
+
+p = Popen(['wc'], stdout=PIPE, stdin=PIPE)
+
+stdout, stderr = p.communicate(text.encode())
+
+print(stdout.decode())
+print(stderr and stderr.decode())
+
+```
+
+> TTY
+
 ## 复制或移动文件和目录
+
+拷贝或移动文件和目录:
+
+```py
+
+
+
+```
+
 
 ## 创建和解压归档文件
 

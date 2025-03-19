@@ -44,6 +44,66 @@ main()
 
 ## 在单元测试中修补对象
 
+使用`unittest.mock.patch()`函数为对象添加补丁:
+
+```py
+from unittest import TestCase, main
+from unittest.mock import patch
+
+url = 'https://chat.deepseek.com/a/chat'
+
+def parse_url(url):
+  return {}
+
+# 单独使用（手动打补丁）
+p = patch('__main__.parse_url')
+mock_func = p.start()
+
+parse_url(url)
+mock_func.assert_called_with(url)
+
+p.stop()
+
+# 装饰器
+@patch('__main__.parse_url')
+def test_parse_url(url, mock_func):
+  parse_url(url)
+  mock_func.assert_called_with(url)
+
+test_parse_url(url)
+
+# 上下文管理器
+with patch('__main__.parse_url') as mock_func:
+  parse_url(url)
+  mock_func.assert_called_with(url)
+
+```
+
+将装饰器或上下文管理器堆叠起来为多个对象打补丁:
+
+```py
+from unittest.mock import patch
+
+def parse_url():
+  pass
+
+def random_int():
+  pass
+
+def patch_flags():
+  pass
+
+def test():
+  with patch('__main__.parse_url') as m1, \
+      patch('__main__.random_int') as m2, \
+      patch('__main__.patch_flags') as m3:
+    print(parse_url)
+
+test()
+
+```
+
+
 ## 在单元测试中测试异常条件
 
 ```py
@@ -239,6 +299,35 @@ except NetworkError as e:
 > `SystemExit`，以及其他应该通知应用程序退出的异常
 
 ## 在响应另一个异常时引发异常
+
+引发一个异常作为捕获另一个异常时的响应，且在traceback回溯中包含这两个异常的信息:
+
+```py
+def div(x, y):
+  try:
+    return x / y
+  except ZeroDivisionError as e:
+    # raise RuntimeError('A parsing error occurred!') from e
+    
+    # 产生隐式的异常链
+    # print([][1]) 
+
+    # 阻止异常链的产生
+    raise RuntimeError('A parsing error occurred!') from None
+
+try:
+  div(1, 0)
+except RuntimeError as e:
+  if(e.__cause__):
+    # 查看异常对象的`__cause__`属性来跟踪所希望的异常链
+    print(e.__cause__)
+except IndexError as e:
+  if(e.__context__):
+    print(e.__context__)
+
+```
+
+> 大部分情况下，在except块中使用raise语句时，应采用`raise from`语句显式将异常产生的原因串联起来
 
 ## 重新引发最后一个异常
 
@@ -480,3 +569,117 @@ print(timeit('sqrt(2)', 'from math import sqrt', number=100000))
 > 墙上时间和进程时间
 
 ## 让程序运行得更快
+
+> JIT即时编译器
+
+优化原则:
+
+1. 不要过早优化，首先确保程序能够正常工作
+2. 仅针对已知的性能瓶颈做优化，比如内层循环
+
+微优化：指对代码进行小规模的性能优化，通常是为了提高执行效率或减少资源消耗
+
+优化技术:
+
+### 使用函数
+
+```py
+#!/usr/bin/env python
+import sys
+import csv
+
+def read_csv(filename):
+  with open(filename) as f:
+    for row in csv.reader(f):
+      print(row)
+
+read_csv(sys.argv[1])
+
+```
+
+> 定义在全局范围内的代码运行起来比定义在函数中的代码慢，其速度差异与局部变量和全局变量的实现机制有关
+
+### 有选择性的消除属性访问
+
+```py
+import timeit
+import math
+
+def compute_roots_v1(nums):
+  result = []
+  for n in nums:
+    result.append(math.sqrt(n))
+  return result
+
+def compute_roots_v2(nums):
+  sqrt = math.sqrt
+  result = []
+  result_append = result.append
+  for n in nums:
+    result_append(sqrt(n))
+  return result
+
+nums = range(10)
+
+def test():
+  for n in range(10):
+    r = compute_roots_v1(nums)
+
+print(timeit.timeit(test, number=10**5))
+
+```
+
+适用于频繁执行代码的场景，比如循环等
+
+### 理解变量所处的位置
+
+在内层循环中将需要经常访问的属性移到局部变量中:
+
+```py
+class SomeClass:
+  def method(self):
+    val = self.value
+    for x in s:
+      op(val)
+
+```
+
+### 避免不必要的抽象
+
+任何时候使用额外的处理层比如装饰器、属性或者描述符包装代码时，代码的运行速度就会变慢
+
+```py
+from timeit import timeit
+
+class A:
+  def __init__(self, x, y):
+    self.x = x
+    self.y = y
+
+  @property
+  def y(self):
+    return self.__y
+
+  @y.setter
+  def y(self, value):
+    self.__y = value
+
+a = A(1, 0)
+
+print(timeit('a.x', 'from __main__ import a'))
+print(timeit('a.y', 'from __main__ import a'))
+
+```
+
+### 使用内建的容器
+
+> 内建的数据结构（字符串、元组、列表、集合以及字典）都是用C语言实现的，速度非常快
+
+### 避免产生不必要的数据结构或拷贝动作
+
+```py
+squares = [x*x for x in sequence]
+
+```
+> 共享值
+
